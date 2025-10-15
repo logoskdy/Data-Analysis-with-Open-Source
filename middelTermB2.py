@@ -1,17 +1,23 @@
 import pandas as pd
+import json
 
 df = pd.read_json('collectedData.json', orient='records')
 print(df.info())
 print(df)
+
+# json에서 필요한 정보만 추출
 data = list()
 # 2-2. 연도별, 계절별 분석을 위해 날짜 컬럼을 활용하여 연도(year)와 계절(season) 컬럼을 추가하는 전처리 코드를 작성하고,
 for idx in range(0, 120):
     data.append(df["energyUseDataSummaryInfo"][idx]["row"])
-print(data)
-df = pd.DataFrame(data)
-renamed_df = df.rename(columns={0: '공공주택관리소', 1:'기업', 2:'개인', 3:'공공기관', 4:'학교'})
-print(renamed_df)
-# print(df[0][0])
+
+print(f'data의 유형: {type(data)}')
+
+# df = pd.DataFrame(data)
+df = pd.json_normalize(data)
+print(df)
+df.to_json('collectedData_modi.json', orient='columns', indent=4, force_ascii=False)
+# print(df.iloc[:1, :8])
 
 # 변환 결과를 확인할 수 있는 출력 결과를 첨부하시오.
 # 계절 구분: 봄(3-5월), 여름(6-8월), 가을(9-11월), 겨울(12-2월) (4점)
